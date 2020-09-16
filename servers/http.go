@@ -14,7 +14,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/FishGoddess/Lighter/caches"
+	"github.com/FishGoddess/kafo/caches"
 	"github.com/julienschmidt/httprouter"
 )
 

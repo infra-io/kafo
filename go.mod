@@ -1,4 +1,4 @@
-module github.com/FishGoddess/Lighter
+module github.com/FishGoddess/kafo
 
 go 1.14
 

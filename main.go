@@ -9,8 +9,8 @@
 package main
 
 import (
-	"github.com/FishGoddess/Lighter/caches"
-	"github.com/FishGoddess/Lighter/servers"
+	"github.com/FishGoddess/kafo/caches"
+	"github.com/FishGoddess/kafo/servers"
 )
 
 func main() {

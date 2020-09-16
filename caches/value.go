@@ -12,7 +12,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/FishGoddess/Lighter/helpers"
+	"github.com/FishGoddess/kafo/helpers"
 )
 
 const (
