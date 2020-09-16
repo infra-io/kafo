@@ -1,0 +1,24 @@
+# Test http routers
+
+# Get
+GET http://{{v1}}/cache/key1
+
+###
+
+# Set
+PUT http://{{v1}}/cache/key1
+ttl: 5
+
+value1
+
+###
+
+# Delete
+DELETE http://{{v1}}/cache/key1
+
+###
+
+# Status
+GET http://{{v1}}/status
+
+###
