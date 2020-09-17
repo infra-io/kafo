@@ -15,10 +15,10 @@ type Status struct {
 	Count int `json:"count"`
 
 	// KeySize is the size of key.
-	KeySize int `json:"keySize"`
+	KeySize int64 `json:"keySize"`
 
 	// ValueSize is the size of value.
-	ValueSize int `json:"valueSize"`
+	ValueSize int64 `json:"valueSize"`
 }
 
 // newStatus returns a new status holder.
@@ -33,13 +33,18 @@ func newStatus() *Status {
 // addEntry adds all information to status with key and value.
 func (s *Status) addEntry(key string, value []byte) {
 	s.Count++
-	s.KeySize += len(key)
-	s.ValueSize += len(value)
+	s.KeySize += int64(len(key))
+	s.ValueSize += int64(len(value))
 }
 
 // subEntry subs all information to status with key and value
 func (s *Status) subEntry(key string, value []byte) {
 	s.Count--
-	s.KeySize -= len(key)
-	s.ValueSize -= len(value)
+	s.KeySize -= int64(len(key))
+	s.ValueSize -= int64(len(value))
+}
+
+// entrySize returns the sum of keySize and valueSize.
+func (s *Status) entrySize() int64 {
+	return s.KeySize + s.ValueSize
 }

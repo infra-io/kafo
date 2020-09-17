@@ -80,3 +80,42 @@ func TestCacheStatus(t *testing.T) {
 		t.Fatal("cache.status can be changed outside!")
 	}
 }
+
+// go test -cover -run=^TestCacheMaxEntrySize$
+func TestCacheMaxEntrySize(t *testing.T) {
+
+	cache := NewCacheWithMaxEntrySize(6)
+	err := cache.Set("key", []byte("v"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if cache.status.entrySize() != 4 {
+		t.Fatalf("The entry size %d is wrong!", cache.status.entrySize())
+	}
+
+	err = cache.Set("key", []byte("value"))
+	if err == nil {
+		t.Fatal(err)
+	}
+
+	if cache.status.entrySize() != 4 {
+		t.Fatalf("The entry size after setting %d is wrong!", cache.status.entrySize())
+	}
+
+	err = cache.Set("key", []byte("val"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cache.Delete("key")
+	err = cache.Set("1", []byte("1"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = cache.Set("22", []byte("22"))
+	if err != nil {
+		t.Fatal(err)
+	}
+}

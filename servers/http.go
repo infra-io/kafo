@@ -80,7 +80,14 @@ func (hs *HTTPServer) setHandler(writer http.ResponseWriter, request *http.Reque
 		writer.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	hs.cache.SetWithTTL(key, value, ttl)
+
+	err = hs.cache.SetWithTTL(key, value, ttl)
+	if err != nil {
+		writer.WriteHeader(http.StatusRequestEntityTooLarge)
+		writer.Write([]byte("Error: " + err.Error()))
+		return
+	}
+	writer.WriteHeader(http.StatusCreated)
 }
 
 // ttlOf returns ttl of this value in request and an error.
