@@ -29,6 +29,10 @@ func TestStatus(t *testing.T) {
 			status.Count, status.KeySize, status.ValueSize)
 	}
 
+	if status.entrySize() != 8 {
+		t.Fatalf("The entrySize is wrong! Got %d size.", status.entrySize())
+	}
+
 	statusJson, err := json.Marshal(status)
 	if err != nil {
 		t.Fatal(err)

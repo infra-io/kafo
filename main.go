@@ -9,13 +9,22 @@
 package main
 
 import (
+	"flag"
+
 	"github.com/FishGoddess/kafo/caches"
 	"github.com/FishGoddess/kafo/servers"
 )
 
 func main() {
-	cache := caches.NewCache()
-	err := servers.NewHTTPServer(cache).Run(":5837")
+
+	// Parse all flags
+	address := flag.String("address", ":5837", "The address used to listen, such as 127.0.0.1:5837.")
+	maxEntrySize := flag.Int64("maxEntrySize", caches.DefaultMaxEntrySize, "The max memory size that entries can use.")
+	flag.Parse()
+
+	// Initialize
+	cache := caches.NewCacheWithMaxEntrySize(*maxEntrySize)
+	err := servers.NewHTTPServer(cache).Run(*address)
 	if err != nil {
 		panic(err)
 	}
