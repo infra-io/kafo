@@ -1,6 +1,7 @@
 ## ✒ 历史版本的特性介绍 (Features in old versions)
 
 ### v0.1.0-alpha
+> 此版本发布于 2020-09-18
 * 提供 Get/Set/Delete 三种基本功能
 * 提供 http 调用接口
 * 支持获取缓存信息，比如 key 和 value 的占用空间
