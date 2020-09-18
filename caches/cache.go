@@ -11,11 +11,7 @@ package caches
 import (
 	"errors"
 	"sync"
-)
-
-const (
-	// DefaultMaxEntrySize is the max memory size that entries can use in default.
-	DefaultMaxEntrySize = int64(4294967296)
+	"time"
 )
 
 // Cache is a struct with caching functions.
@@ -24,8 +20,8 @@ type Cache struct {
 	// data stores the real things in cache.
 	data map[string]*value
 
-	// maxEntrySize is the max memory size that entries can use.
-	maxEntrySize int64
+	// options stores all options.
+	options Options
 
 	// status stores the status of cache.
 	status *Status
@@ -36,15 +32,15 @@ type Cache struct {
 
 // NewCache returns a new Cache holder.
 func NewCache() *Cache {
-	return NewCacheWithMaxEntrySize(DefaultMaxEntrySize)
+	return NewCacheWith(DefaultOptions())
 }
 
-func NewCacheWithMaxEntrySize(maxEntrySize int64) *Cache {
+func NewCacheWith(options Options) *Cache {
 	return &Cache{
-		data:         make(map[string]*value, 256),
-		maxEntrySize: maxEntrySize,
-		status:       newStatus(),
-		lock:         &sync.RWMutex{},
+		data:    make(map[string]*value, 256),
+		options: options,
+		status:  newStatus(),
+		lock:    &sync.RWMutex{},
 	}
 }
 
@@ -110,5 +106,35 @@ func (c *Cache) Status() Status {
 
 // checkEntrySize checks the entry size and guarantees it will not exceed.
 func (c *Cache) checkEntrySize(newKey string, newValue []byte) bool {
-	return c.status.entrySize()+int64(len(newKey))+int64(len(newValue)) <= c.maxEntrySize
+	return c.status.entrySize()+int64(len(newKey))+int64(len(newValue)) <= c.options.MaxEntrySize*1024*1024
+}
+
+// gc will clean up the dead entries in cache.
+func (c *Cache) gc() {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+	count := 0
+	for key, value := range c.data {
+		if !value.alive() {
+			c.status.subEntry(key, value.data)
+			delete(c.data, key)
+			count++
+			if count >= c.options.MaxGcCount {
+				break
+			}
+		}
+	}
+}
+
+// AutoGc starts a goroutine and run the gc task at fixed duration.
+func (c *Cache) AutoGc() {
+	go func() {
+		ticker := time.NewTicker(time.Duration(c.options.GcDuration) * time.Minute)
+		for {
+			select {
+			case <-ticker.C:
+				c.gc()
+			}
+		}
+	}()
 }

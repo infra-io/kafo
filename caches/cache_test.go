@@ -9,6 +9,7 @@
 package caches
 
 import (
+	"strconv"
 	"testing"
 	"time"
 )
@@ -81,41 +82,45 @@ func TestCacheStatus(t *testing.T) {
 	}
 }
 
-// go test -cover -run=^TestCacheMaxEntrySize$
-func TestCacheMaxEntrySize(t *testing.T) {
+// go test -cover -run="^TestCacheGc$"
+func TestCacheGc(t *testing.T) {
 
-	cache := NewCacheWithMaxEntrySize(6)
-	err := cache.Set("key", []byte("v"))
-	if err != nil {
-		t.Fatal(err)
+	cache := NewCache()
+	cache.SetWithTTL("key1", []byte{}, 1)
+	cache.SetWithTTL("key2", []byte{}, 1)
+	if cache.Status().Count != 2 {
+		t.Fatal("The count of cache is wrong!")
 	}
 
-	if cache.status.entrySize() != 4 {
-		t.Fatalf("The entry size %d is wrong!", cache.status.entrySize())
+	time.Sleep(2 * time.Second)
+	if cache.Status().Count != 2 {
+		t.Fatal("The count of cache is wrong before gc!")
 	}
 
-	err = cache.Set("key", []byte("value"))
-	if err == nil {
-		t.Fatal(err)
+	cache.gc()
+	if cache.Status().Count != 0 {
+		t.Fatal("The count of cache is wrong after gc!")
 	}
 
-	if cache.status.entrySize() != 4 {
-		t.Fatalf("The entry size after setting %d is wrong!", cache.status.entrySize())
+	options := DefaultOptions()
+	options.MaxGcCount = 66
+
+	cache = NewCacheWith(options)
+	for i := 0; i < 100; i++ {
+		cache.SetWithTTL("key"+strconv.Itoa(i), []byte{}, 1)
 	}
 
-	err = cache.Set("key", []byte("val"))
-	if err != nil {
-		t.Fatal(err)
+	if cache.Status().Count != 100 {
+		t.Fatal("The count of cache is wrong!")
 	}
 
-	cache.Delete("key")
-	err = cache.Set("1", []byte("1"))
-	if err != nil {
-		t.Fatal(err)
+	time.Sleep(2 * time.Second)
+	if cache.Status().Count != 100 {
+		t.Fatal("The count of cache is wrong before gc!")
 	}
 
-	err = cache.Set("22", []byte("22"))
-	if err != nil {
-		t.Fatal(err)
+	cache.gc()
+	if cache.Status().Count != 34 {
+		t.Fatal("The count of cache is wrong after gc!")
 	}
 }
