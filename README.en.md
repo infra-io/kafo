@@ -13,6 +13,7 @@
 * Status in control, such as memory size
 * Memory exceed protection, eliminating entries with ttl and lru
 * Automatically gc, using random strategy to clean up the dead entries.
+* Persistence supports, based on memory snapshot.
 
 _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about more information._
 

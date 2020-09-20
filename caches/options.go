@@ -21,6 +21,13 @@ type Options struct {
 	// GcDuration is the duration between two gc tasks.
 	// The unit is Minute.
 	GcDuration int64
+
+	// DumpFile is the file used to dump the cache.
+	DumpFile string
+
+	// DumpDuration is the duration between two dump tasks.
+	// The unit is Minute.
+	DumpDuration int64
 }
 
 // DefaultOptions returns a default options.
@@ -29,5 +36,7 @@ func DefaultOptions() Options {
 		MaxEntrySize: int64(4), // 4 GB
 		MaxGcCount:   1000,
 		GcDuration:   60, // 1 hour
+		DumpFile:     "kafo.dump",
+		DumpDuration: 30, // 30 minutes
 	}
 }

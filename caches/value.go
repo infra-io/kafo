@@ -24,32 +24,32 @@ const (
 type value struct {
 
 	// data stores the real thing inside.
-	data []byte
+	Data []byte
 
 	// ttl is the life of value.
 	// The unit is second.
-	ttl int64
+	Ttl int64
 
 	// ctime is the created time of value.
-	ctime int64
+	Ctime int64
 }
 
 // newValue returns a new value with data and ttl.
 func newValue(data []byte, ttl int64) *value {
 	return &value{
-		data:  helpers.Copy(data),
-		ttl:   ttl,
-		ctime: time.Now().Unix(),
+		Data:  helpers.Copy(data),
+		Ttl:   ttl,
+		Ctime: time.Now().Unix(),
 	}
 }
 
 // alive returns if this value is alive or not.
 func (v *value) alive() bool {
-	return v.ttl == NeverDie || time.Now().Unix()-v.ctime < v.ttl
+	return v.Ttl == NeverDie || time.Now().Unix()-v.Ctime < v.Ttl
 }
 
 // visit updates the ctime of value to now.
 func (v *value) visit() []byte {
-	atomic.SwapInt64(&v.ctime, time.Now().Unix())
-	return v.data
+	atomic.SwapInt64(&v.Ctime, time.Now().Unix())
+	return v.Data
 }
