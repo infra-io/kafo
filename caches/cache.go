@@ -30,11 +30,12 @@ type Cache struct {
 	lock *sync.RWMutex
 }
 
-// NewCache returns a new Cache holder.
+// NewCache returns a new Cache holder with default options.
 func NewCache() *Cache {
 	return NewCacheWith(DefaultOptions())
 }
 
+// NewCacheWith returns a new Cache holder with given options.
 func NewCacheWith(options Options) *Cache {
 	return &Cache{
 		data:    make(map[string]*value, 256),
@@ -59,7 +60,7 @@ func (c *Cache) Get(key string) ([]byte, bool) {
 		c.lock.RLock()
 		return nil, false
 	}
-	return value.visit(), ok
+	return value.visit(), true
 }
 
 // Set sets an entry of specified key and value.

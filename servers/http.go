@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"path"
 	"strconv"
 
 	"github.com/FishGoddess/kafo/caches"
@@ -20,7 +21,7 @@ import (
 
 // HTTPServer is a http type server.
 type HTTPServer struct {
-	// Cache is the real cache used inside.
+	// cache is the real cache used inside.
 	cache *caches.Cache
 }
 
@@ -41,7 +42,7 @@ func (hs *HTTPServer) Run(address string) error {
 // wrapUriWithVersion wraps uri with api version.
 // If version is "v1" and uri is "/cache", the result will be like "/v1/cache".
 func wrapUriWithVersion(uri string) string {
-	return "/" + APIVersion + uri
+	return path.Join("/", APIVersion, uri)
 }
 
 // routerHandler returns a Handler registering routers.
@@ -94,7 +95,7 @@ func (hs *HTTPServer) setHandler(writer http.ResponseWriter, request *http.Reque
 func ttlOf(request *http.Request) (int64, error) {
 	ttls, ok := request.Header["Ttl"]
 	if !ok || len(ttls) < 1 {
-		return 0, nil
+		return caches.NeverDie, nil
 	}
 	return strconv.ParseInt(ttls[0], 10, 64)
 }
