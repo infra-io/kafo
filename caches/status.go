@@ -37,7 +37,7 @@ func (s *Status) addEntry(key string, value []byte) {
 	s.ValueSize += int64(len(value))
 }
 
-// subEntry subs all information to status with key and value
+// subEntry subs all information to status with key and value.
 func (s *Status) subEntry(key string, value []byte) {
 	s.Count--
 	s.KeySize -= int64(len(key))

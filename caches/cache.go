@@ -10,8 +10,11 @@ package caches
 
 import (
 	"errors"
+	"fmt"
 	"sync"
 	"time"
+
+	"github.com/FishGoddess/kafo/helpers"
 )
 
 // Cache is a struct with caching functions.
@@ -30,18 +33,32 @@ type Cache struct {
 	lock *sync.RWMutex
 }
 
-// NewCache returns a new Cache holder.
+// NewCache returns a new Cache holder with default options.
 func NewCache() *Cache {
 	return NewCacheWith(DefaultOptions())
 }
 
+// NewCacheWith returns a new Cache holder with given options.
 func NewCacheWith(options Options) *Cache {
+	if cache, ok := recoverFromDumpFile(options.DumpFile); ok {
+		return cache
+	}
 	return &Cache{
 		data:    make(map[string]*value, 256),
 		options: options,
 		status:  newStatus(),
 		lock:    &sync.RWMutex{},
 	}
+}
+
+// recoverFromDumpFile recovers the cache from a dump file.
+// Return a false if failed.
+func recoverFromDumpFile(dumpFile string) (*Cache, bool) {
+	dump := &dump{}
+	if err := helpers.Unmarshal(dump, dumpFile); err != nil {
+		return nil, false
+	}
+	return dump.toCache(), true
 }
 
 // Get returns the value of specified key.
@@ -59,7 +76,7 @@ func (c *Cache) Get(key string) ([]byte, bool) {
 		c.lock.RLock()
 		return nil, false
 	}
-	return value.visit(), ok
+	return value.visit(), true
 }
 
 // Set sets an entry of specified key and value.
@@ -72,12 +89,12 @@ func (c *Cache) SetWithTTL(key string, value []byte, ttl int64) error {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	if oldValue, ok := c.data[key]; ok {
-		c.status.subEntry(key, oldValue.data)
+		c.status.subEntry(key, oldValue.Data)
 	}
 
 	if !c.checkEntrySize(key, value) {
 		if oldValue, ok := c.data[key]; ok {
-			c.status.addEntry(key, oldValue.data)
+			c.status.addEntry(key, oldValue.Data)
 		}
 		return errors.New("the entry size will exceed if you set this entry")
 	}
@@ -92,7 +109,7 @@ func (c *Cache) Delete(key string) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	if oldValue, ok := c.data[key]; ok {
-		c.status.subEntry(key, oldValue.data)
+		c.status.subEntry(key, oldValue.Data)
 		delete(c.data, key)
 	}
 }
@@ -116,7 +133,7 @@ func (c *Cache) gc() {
 	count := 0
 	for key, value := range c.data {
 		if !value.alive() {
-			c.status.subEntry(key, value.data)
+			c.status.subEntry(key, value.Data)
 			delete(c.data, key)
 			count++
 			if count >= c.options.MaxGcCount {
@@ -134,6 +151,27 @@ func (c *Cache) AutoGc() {
 			select {
 			case <-ticker.C:
 				c.gc()
+			}
+		}
+	}()
+}
+
+// dump dumps c to dumpFile and returns an error if failed.
+func (c *Cache) dump() error {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+	return helpers.Marshal(newDump(c), c.options.DumpFile)
+}
+
+// AutoDump starts a goroutine and run the dump task at fixed duration.
+func (c *Cache) AutoDump() {
+	go func() {
+		ticker := time.NewTicker(time.Duration(c.options.DumpDuration) * time.Minute)
+		for {
+			select {
+			case t := <-ticker.C:
+				fmt.Println(t)
+				c.dump()
 			}
 		}
 	}()
