@@ -10,11 +10,8 @@ package caches
 
 import (
 	"errors"
-	"fmt"
 	"sync"
 	"time"
-
-	"github.com/FishGoddess/kafo/helpers"
 )
 
 // Cache is a struct with caching functions.
@@ -54,11 +51,11 @@ func NewCacheWith(options Options) *Cache {
 // recoverFromDumpFile recovers the cache from a dump file.
 // Return a false if failed.
 func recoverFromDumpFile(dumpFile string) (*Cache, bool) {
-	dump := &dump{}
-	if err := helpers.Unmarshal(dump, dumpFile); err != nil {
+	cache, err := newEmptyDump().from(dumpFile)
+	if err != nil {
 		return nil, false
 	}
-	return dump.toCache(), true
+	return cache, true
 }
 
 // Get returns the value of specified key.
@@ -160,7 +157,7 @@ func (c *Cache) AutoGc() {
 func (c *Cache) dump() error {
 	c.lock.Lock()
 	defer c.lock.Unlock()
-	return helpers.Marshal(newDump(c), c.options.DumpFile)
+	return newDump(c).to(c.options.DumpFile)
 }
 
 // AutoDump starts a goroutine and run the dump task at fixed duration.
@@ -169,8 +166,7 @@ func (c *Cache) AutoDump() {
 		ticker := time.NewTicker(time.Duration(c.options.DumpDuration) * time.Minute)
 		for {
 			select {
-			case t := <-ticker.C:
-				fmt.Println(t)
+			case <-ticker.C:
 				c.dump()
 			}
 		}
