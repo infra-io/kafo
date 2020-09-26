@@ -12,6 +12,7 @@ import (
 	"encoding/gob"
 	"os"
 	"sync"
+	"time"
 )
 
 // dump is for dumping the cache.
@@ -41,21 +42,44 @@ func newDump(c *Cache) *dump {
 	}
 }
 
+// nowSuffix returns a string of current time formatted as 20060102150405.
+func nowSuffix() string {
+	return "." + time.Now().Format("20060102150405")
+}
+
 // to dumps d to dumpFile and returns an error if failed.
 func (d *dump) to(dumpFile string) error {
-	file, err := os.OpenFile(dumpFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+	newDumpFile := dumpFile + nowSuffix()
+	file, err := os.OpenFile(newDumpFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
-	return gob.NewEncoder(file).Encode(d)
+	defer file.Close()
+
+	err = gob.NewEncoder(file).Encode(d)
+	if err != nil {
+		file.Close()
+		os.Remove(newDumpFile)
+		return err
+	}
+
+	os.Remove(dumpFile)
+	file.Close()
+	return os.Rename(newDumpFile, dumpFile)
 }
 
 // from returns a Cache holder parsed from d of dumpFile.
 func (d *dump) from(dumpFile string) (*Cache, error) {
 	file, err := os.Open(dumpFile)
-	if err != nil || gob.NewDecoder(file).Decode(d) != nil {
+	if err != nil {
 		return nil, err
 	}
+	defer file.Close()
+
+	if err = gob.NewDecoder(file).Decode(d); err != nil {
+		return nil, err
+	}
+
 	return &Cache{
 		data:    d.Data,
 		options: d.Options,

@@ -10,6 +10,7 @@ package main
 
 import (
 	"flag"
+	"log"
 
 	"github.com/FishGoddess/kafo/caches"
 	"github.com/FishGoddess/kafo/servers"
@@ -32,6 +33,8 @@ func main() {
 	cache := caches.NewCacheWith(options)
 	cache.AutoGc()
 	cache.AutoDump()
+
+	log.Printf("Kafo is running on %s.", *address)
 	err := servers.NewHTTPServer(cache).Run(*address)
 	if err != nil {
 		panic(err)
