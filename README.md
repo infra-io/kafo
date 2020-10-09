@@ -33,7 +33,7 @@ _历史版本的特性请查看 [HISTORY.md](./HISTORY.md)。未来版本的新�
 
 | Write | Read |
 |------|------|
-| 112.3 ms | 960.9 ms |
+| 60.0 ms | 543.6 ms |
 
 测试详情参考文件 [_examples/performance_test.go](./_examples/performance_test.go)。
 
