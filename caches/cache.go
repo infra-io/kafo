@@ -120,7 +120,7 @@ func (c *Cache) Status() Status {
 
 // checkEntrySize checks the entry size and guarantees it will not exceed.
 func (c *Cache) checkEntrySize(newKey string, newValue []byte) bool {
-	return c.status.entrySize()+int64(len(newKey))+int64(len(newValue)) <= c.options.MaxEntrySize*1024*1024
+	return c.status.entrySize()+int64(len(newKey))+int64(len(newValue)) <= int64(c.options.MaxEntrySize*1024*1024)
 }
 
 // gc will clean up the dead entries in cache.
