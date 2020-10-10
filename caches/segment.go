@@ -87,6 +87,13 @@ func (s *segment) delete(key string) {
 	}
 }
 
+// Status returns the status of segment.
+func (s *segment) status() Status {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+	return *s.Status
+}
+
 // checkEntrySize checks the entry size and guarantees it will not exceed.
 func (s *segment) checkEntrySize(newKey string, newValue []byte) bool {
 	return s.Status.entrySize()+int64(len(newKey))+int64(len(newValue)) <= int64((s.options.MaxEntrySize*1024*1024) / s.options.SegmentSize)

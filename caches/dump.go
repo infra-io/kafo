@@ -18,14 +18,14 @@ import (
 // dump is for dumping the cache.
 type dump struct {
 
-	// Data stores the real things in cache.
-	Data map[string]*value
+	// SegmentSize is the size of segments.
+	SegmentSize int
+
+	// Segments is a slice stores the real data.
+	Segments []*segment
 
 	// Options stores all options.
-	Options Options
-
-	// Status stores the status of cache.
-	Status *Status
+	Options *Options
 }
 
 // newEmptyDump return an empty dump holder.
@@ -36,9 +36,9 @@ func newEmptyDump() *dump {
 // newDump returns a dump holder of c.
 func newDump(c *Cache) *dump {
 	return &dump{
-		Data:    c.data,
-		Options: c.options,
-		Status:  c.status,
+		SegmentSize: c.segmentSize,
+		Segments:    c.segments,
+		Options:     c.options,
 	}
 }
 
@@ -49,6 +49,7 @@ func nowSuffix() string {
 
 // to dumps d to dumpFile and returns an error if failed.
 func (d *dump) to(dumpFile string) error {
+
 	newDumpFile := dumpFile + nowSuffix()
 	file, err := os.OpenFile(newDumpFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
@@ -70,6 +71,7 @@ func (d *dump) to(dumpFile string) error {
 
 // from returns a Cache holder parsed from d of dumpFile.
 func (d *dump) from(dumpFile string) (*Cache, error) {
+
 	file, err := os.Open(dumpFile)
 	if err != nil {
 		return nil, err
@@ -80,10 +82,15 @@ func (d *dump) from(dumpFile string) (*Cache, error) {
 		return nil, err
 	}
 
+	for _, segment := range d.Segments {
+		segment.options = d.Options
+		segment.lock = &sync.RWMutex{}
+	}
+
 	return &Cache{
-		data:    d.Data,
-		options: d.Options,
-		status:  d.Status,
-		lock:    &sync.RWMutex{},
+		segmentSize: d.SegmentSize,
+		segments:    d.Segments,
+		options:     d.Options,
+		dumping:     0,
 	}, nil
 }

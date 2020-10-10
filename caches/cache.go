@@ -9,25 +9,27 @@
 package caches
 
 import (
-	"errors"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
 // Cache is a struct with caching functions.
 type Cache struct {
 
-	// data stores the real things in cache.
-	data map[string]*value
+	// segmentSize is the size of segments.
+	// This value will affect the performance of concurrency.
+	segmentSize int
+
+	// segments is a slice stores the real data.
+	segments []*segment
 
 	// options stores all options.
-	options Options
+	options *Options
 
-	// status stores the status of cache.
-	status *Status
-
-	// lock is for concurrency.
-	lock *sync.RWMutex
+	// dumping means if cache is in dumping status.
+	// 1 is dumping.
+	dumping int32
 }
 
 // NewCache returns a new Cache holder with default options.
@@ -41,10 +43,10 @@ func NewCacheWith(options Options) *Cache {
 		return cache
 	}
 	return &Cache{
-		data:    make(map[string]*value, 256),
-		options: options,
-		status:  newStatus(),
-		lock:    &sync.RWMutex{},
+		segmentSize: options.SegmentSize,
+		segments:    newSegments(&options),
+		options:     &options,
+		dumping:     0,
 	}
 }
 
@@ -58,22 +60,34 @@ func recoverFromDumpFile(dumpFile string) (*Cache, bool) {
 	return cache, true
 }
 
+// newSegments returns a slice of initialized segments.
+func newSegments(options *Options) []*segment {
+	segments := make([]*segment, options.SegmentSize)
+	for i := 0; i < options.SegmentSize; i++ {
+		segments[i] = newSegment(options)
+	}
+	return segments
+}
+
+// index returns a position in segments of this key.
+func index(key string) int {
+	index := 0
+	keyBytes := []byte(key)
+	for _, b := range keyBytes {
+		index = 31*index + int(b&0xff)
+	}
+	return index
+}
+
+// segmentOf returns the segment of this key.
+func (c *Cache) segmentOf(key string) *segment {
+	return c.segments[index(key)&(c.segmentSize-1)]
+}
+
 // Get returns the value of specified key.
 func (c *Cache) Get(key string) ([]byte, bool) {
-	c.lock.RLock()
-	defer c.lock.RUnlock()
-	value, ok := c.data[key]
-	if !ok {
-		return nil, false
-	}
-
-	if !value.alive() {
-		c.lock.RUnlock()
-		c.Delete(key)
-		c.lock.RLock()
-		return nil, false
-	}
-	return value.visit(), true
+	c.waitForDumping()
+	return c.segmentOf(key).get(key)
 }
 
 // Set sets an entry of specified key and value.
@@ -83,61 +97,40 @@ func (c *Cache) Set(key string, value []byte) error {
 
 // SetWithTTL sets an entry of specified key and value which has ttl.
 func (c *Cache) SetWithTTL(key string, value []byte, ttl int64) error {
-	c.lock.Lock()
-	defer c.lock.Unlock()
-	if oldValue, ok := c.data[key]; ok {
-		c.status.subEntry(key, oldValue.Data)
-	}
-
-	if !c.checkEntrySize(key, value) {
-		if oldValue, ok := c.data[key]; ok {
-			c.status.addEntry(key, oldValue.Data)
-		}
-		return errors.New("the entry size will exceed if you set this entry")
-	}
-
-	c.status.addEntry(key, value)
-	c.data[key] = newValue(value, ttl)
-	return nil
+	c.waitForDumping()
+	return c.segmentOf(key).set(key, value, ttl)
 }
 
 // Delete deletes the specified key and value.
 func (c *Cache) Delete(key string) {
-	c.lock.Lock()
-	defer c.lock.Unlock()
-	if oldValue, ok := c.data[key]; ok {
-		c.status.subEntry(key, oldValue.Data)
-		delete(c.data, key)
-	}
+	c.waitForDumping()
+	c.segmentOf(key).delete(key)
 }
 
 // Status returns the status of cache.
 func (c *Cache) Status() Status {
-	c.lock.RLock()
-	defer c.lock.RUnlock()
-	return *c.status
-}
-
-// checkEntrySize checks the entry size and guarantees it will not exceed.
-func (c *Cache) checkEntrySize(newKey string, newValue []byte) bool {
-	return c.status.entrySize()+int64(len(newKey))+int64(len(newValue)) <= int64(c.options.MaxEntrySize*1024*1024)
+	result := newStatus()
+	for _, segment := range c.segments {
+		status := segment.status()
+		result.Count += status.Count
+		result.KeySize += status.KeySize
+		result.ValueSize += status.ValueSize
+	}
+	return *result
 }
 
 // gc will clean up the dead entries in cache.
 func (c *Cache) gc() {
-	c.lock.Lock()
-	defer c.lock.Unlock()
-	count := 0
-	for key, value := range c.data {
-		if !value.alive() {
-			c.status.subEntry(key, value.Data)
-			delete(c.data, key)
-			count++
-			if count >= c.options.MaxGcCount {
-				break
-			}
-		}
+	c.waitForDumping()
+	wg := &sync.WaitGroup{}
+	for _, seg := range c.segments {
+		wg.Add(1)
+		go func(s *segment) {
+			defer wg.Done()
+			s.gc()
+		}(seg)
 	}
+	wg.Wait()
 }
 
 // AutoGc starts a goroutine and run the gc task at fixed duration.
@@ -155,8 +148,8 @@ func (c *Cache) AutoGc() {
 
 // dump dumps c to dumpFile and returns an error if failed.
 func (c *Cache) dump() error {
-	c.lock.Lock()
-	defer c.lock.Unlock()
+	atomic.StoreInt32(&c.dumping, 1)
+	defer atomic.StoreInt32(&c.dumping, 0)
 	return newDump(c).to(c.options.DumpFile)
 }
 
@@ -171,4 +164,11 @@ func (c *Cache) AutoDump() {
 			}
 		}
 	}()
+}
+
+// waitForDumping will wait for dumping.
+func (c *Cache) waitForDumping() {
+	for atomic.LoadInt32(&c.dumping) != 0 {
+		time.Sleep(time.Duration(c.options.CasSleepTime) * time.Microsecond)
+	}
 }

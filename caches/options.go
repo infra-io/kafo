@@ -35,6 +35,10 @@ type Options struct {
 	// SegmentSize is the number of segment in a cache.
 	// This value should be the pow of 2 for precision.
 	SegmentSize int
+
+	// CasSleepTime is the time of sleep in one cas step.
+	// The unit is Microsecond.
+	CasSleepTime int
 }
 
 // DefaultOptions returns a default options.
@@ -47,5 +51,6 @@ func DefaultOptions() Options {
 		DumpDuration:     30, // 30 minutes
 		MapSizeOfSegment: 256,
 		SegmentSize:      1024,
+		CasSleepTime:     1000, // 1 ms
 	}
 }
