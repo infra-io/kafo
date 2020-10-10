@@ -23,13 +23,21 @@ _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about mor
 
 ### 📖 Guides
 
-(Developing...)
+```bash
+$ go run main.go
+```
 
 ### 🔥 Benchmarks
 
-(Developing...)
+> Case: 1000 Goroutines, writing and reading
 
-> Environment：R7-4700U CPU @ 2.0 GHZ，16 GB RAM
+> Environment: R7-4700U CPU @ 2.0 GHZ，16 GB RAM
+
+| Write | Read |
+|------|------|
+| 60.0 ms | 543.6 ms |
+
+More detail in [_examples/performance_test.go](./_examples/performance_test.go).
 
 ### 👤 Contributing
 

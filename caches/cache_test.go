@@ -105,25 +105,25 @@ func TestCacheGc(t *testing.T) {
 	}
 
 	options := DefaultOptions()
-	options.MaxGcCount = 66
+	options.MaxGcCount = 4
 
 	cache = NewCacheWith(options)
-	for i := 0; i < 100; i++ {
-		cache.SetWithTTL("key"+strconv.Itoa(i), []byte{}, 1)
+	for i := 0; i < 10000; i++ {
+		cache.SetWithTTL("key"+strconv.Itoa(i), []byte{}, 2)
 	}
 
-	if cache.Status().Count != 100 {
+	if cache.Status().Count != 10000 {
 		t.Fatal("The count of cache is wrong!")
 	}
 
-	time.Sleep(2 * time.Second)
-	if cache.Status().Count != 100 {
+	time.Sleep(3 * time.Second)
+	if cache.Status().Count != 10000 {
 		t.Fatal("The count of cache is wrong before gc!")
 	}
 
 	cache.gc()
-	if cache.Status().Count != 34 {
-		t.Fatal("The count of cache is wrong after gc!")
+	if cache.Status().Count >= 10000 {
+		t.Fatal("The count of cache is wrong after gc! Count is ", cache.Status().Count)
 	}
 }
 
