@@ -23,7 +23,9 @@ _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about mor
 
 ### 📖 Guides
 
-(Developing...)
+```bash
+$ go run main.go
+```
 
 ### 🔥 Benchmarks
 
