@@ -76,7 +76,7 @@ func index(key string) int {
 	for _, b := range keyBytes {
 		index = 31*index + int(b&0xff)
 	}
-	return index
+	return index ^ (index >> 16)
 }
 
 // segmentOf returns the segment of this key.
