@@ -45,7 +45,7 @@ type Options struct {
 func DefaultOptions() Options {
 	return Options{
 		MaxEntrySize:     4, // 4 GB
-		MaxGcCount:       1000,
+		MaxGcCount:       10,
 		GcDuration:       60, // 1 hour
 		DumpFile:         "kafo.dump",
 		DumpDuration:     30, // 30 minutes
