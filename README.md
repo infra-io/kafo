@@ -9,7 +9,7 @@
 ### 📃 功能特性
 
 * 提供 Get/Set/Delete/Status 几种调用接口
-* 提供 HTTP 服务
+* 提供 HTTP / TCP 两种调用服务
 * 支持获取缓存信息，比如 key 和 value 的占用空间
 * 引入内存写满保护，使用 TTL 和 LRU 两种算法进行过期
 * 引入 GC 机制，随机淘汰过期数据

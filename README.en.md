@@ -9,7 +9,7 @@
 ### 📃 Features
 
 * Get/Set/Delete/Status interface supports
-* HTTP server supports
+* HTTP / TCP server supports
 * Status in control, such as memory size
 * Memory exceed protection, eliminating entries with ttl and lru
 * Automatically gc, using random strategy to clean up the dead entries.
