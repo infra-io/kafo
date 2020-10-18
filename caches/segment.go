@@ -33,7 +33,7 @@ type segment struct {
 func newSegment(options *Options) *segment {
 	return &segment{
 		Data:    make(map[string]*value, options.MapSizeOfSegment),
-		Status:  newStatus(),
+		Status:  NewStatus(),
 		options: options,
 		lock:    &sync.RWMutex{},
 	}
@@ -96,7 +96,7 @@ func (s *segment) status() Status {
 
 // checkEntrySize checks the entry size and guarantees it will not exceed.
 func (s *segment) checkEntrySize(newKey string, newValue []byte) bool {
-	return s.Status.entrySize()+int64(len(newKey))+int64(len(newValue)) <= int64((s.options.MaxEntrySize*1024*1024) / s.options.SegmentSize)
+	return s.Status.entrySize()+int64(len(newKey))+int64(len(newValue)) <= int64((s.options.MaxEntrySize*1024*1024)/s.options.SegmentSize)
 }
 
 // gc will clean up the dead entries in segment.

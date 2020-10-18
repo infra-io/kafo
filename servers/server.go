@@ -8,6 +8,8 @@
 
 package servers
 
+import "github.com/FishGoddess/kafo/caches"
+
 const (
 	// APIVersion is the version of serving APIs.
 	APIVersion = "v1"
@@ -18,4 +20,12 @@ type Server interface {
 
 	// Run runs a server on specified address.
 	Run(address string) error
+}
+
+// NewServer returns a server of serverType.
+func NewServer(serverType string, cache *caches.Cache) Server {
+	if serverType == "tcp" {
+		return NewTCPServer(cache)
+	}
+	return NewHTTPServer(cache)
 }

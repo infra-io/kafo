@@ -30,6 +30,8 @@ func main() {
 	flag.IntVar(&options.MapSizeOfSegment, "mapSizeOfSegment", options.MapSizeOfSegment, "The map size of segment.")
 	flag.IntVar(&options.SegmentSize, "segmentSize", options.SegmentSize, "The number of segment in a cache. This value should be the pow of 2 for precision.")
 	flag.IntVar(&options.CasSleepTime, "casSleepTime", options.CasSleepTime, "The time of sleep in one cas step. The unit is Microsecond.")
+
+	serverType := flag.String("serverType", "tcp", "The type of server (http, tcp).")
 	flag.Parse()
 
 	// Initialize
@@ -37,8 +39,8 @@ func main() {
 	cache.AutoGc()
 	cache.AutoDump()
 
-	log.Printf("Kafo is running on %s.", *address)
-	err := servers.NewHTTPServer(cache).Run(*address)
+	log.Printf("Kafo is running on %s at %s.", *serverType, *address)
+	err := servers.NewServer(*serverType, cache).Run(*address)
 	if err != nil {
 		panic(err)
 	}

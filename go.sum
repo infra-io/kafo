@@ -1,2 +1,8 @@
+github.com/FishGoddess/vex v0.1.0 h1:X32xYYDXcst5vntUct6VrOcb3GaHrIa0VhYv/YOImPU=
+github.com/FishGoddess/vex v0.1.0/go.mod h1:e55NI66M4bTjBTOoi8DW4tFr6Q6FrbkIDaP2QtyUUN8=
+github.com/FishGoddess/vex v0.1.1 h1:95cbsV9TssSzUM7jYn/r/4aSpEop2T/z6fjr9rY/6rk=
+github.com/FishGoddess/vex v0.1.1/go.mod h1:e55NI66M4bTjBTOoi8DW4tFr6Q6FrbkIDaP2QtyUUN8=
+github.com/FishGoddess/vex v0.1.2 h1:LHgCwnkJozdz9MhQKSsXGxbAUN4ZRxXja5ToPlZNeNE=
+github.com/FishGoddess/vex v0.1.2/go.mod h1:e55NI66M4bTjBTOoi8DW4tFr6Q6FrbkIDaP2QtyUUN8=
 github.com/julienschmidt/httprouter v1.3.0 h1:U0609e9tgbseu3rBINet9P48AI/D3oJs4dN7jwJOQ1U=
 github.com/julienschmidt/httprouter v1.3.0/go.mod h1:JR6WtHb+2LUe8TCKY3cZOxFyyO8IZAc4RVcycCCAKdM=

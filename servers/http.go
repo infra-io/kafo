@@ -103,7 +103,11 @@ func ttlOf(request *http.Request) (int64, error) {
 // deleteHandler is a handler for deleting the entry of specified key.
 func (hs *HTTPServer) deleteHandler(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	key := params.ByName("key")
-	hs.cache.Delete(key)
+	err := hs.cache.Delete(key)
+	if err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 // statusHandler is handler for fetching the status of cache.
