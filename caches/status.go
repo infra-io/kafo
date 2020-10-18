@@ -21,8 +21,8 @@ type Status struct {
 	ValueSize int64 `json:"valueSize"`
 }
 
-// newStatus returns a new status holder.
-func newStatus() *Status {
+// NewStatus returns a new status holder.
+func NewStatus() *Status {
 	return &Status{
 		Count:     0,
 		KeySize:   0,

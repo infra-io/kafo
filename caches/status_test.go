@@ -16,7 +16,7 @@ import (
 // go test -cover -run=^TestStatus$
 func TestStatus(t *testing.T) {
 
-	status := newStatus()
+	status := NewStatus()
 	if status.Count != 0 || status.KeySize != 0 || status.ValueSize != 0 {
 		t.Fatalf("The new status should be zero! Count is %d. KeySize is %d. ValueSize is %d.",
 			status.Count, status.KeySize, status.ValueSize)

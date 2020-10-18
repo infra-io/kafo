@@ -33,9 +33,10 @@ $ go run main.go
 
 > Environment: R7-4700U CPU @ 2.0 GHZ，16 GB RAM
 
-| Write | Read |
-|------|------|
-| 60.0 ms | 543.6 ms |
+| type | Write | Read |
+|------|-------|------|
+| http | 689.3ms | 5272.1ms |
+| tcp | 403.9ms | 387.1ms |
 
 More detail in [_examples/performance_test.go](./_examples/performance_test.go).
 
@@ -48,3 +49,4 @@ If you find that something is not working as expected please open an _**issue**_
 | Project | Author | Description | link |
 | -----------|--------|-------------|------------------|
 | logit | FishGoddess | A high-performance and easy-to-use logging foundation | [GitHub](https://github.com/FishGoddess/logit) / [Gitee](https://gitee.com/FishGoddess/logit) |
+| vex | FishGoddess | A high-performance and easy-to-use net foundation | [GitHub](https://github.com/FishGoddess/vex) / [Gitee](https://gitee.com/FishGoddess/vex) |

@@ -102,14 +102,15 @@ func (c *Cache) SetWithTTL(key string, value []byte, ttl int64) error {
 }
 
 // Delete deletes the specified key and value.
-func (c *Cache) Delete(key string) {
+func (c *Cache) Delete(key string) error {
 	c.waitForDumping()
 	c.segmentOf(key).delete(key)
+	return nil
 }
 
 // Status returns the status of cache.
 func (c *Cache) Status() Status {
-	result := newStatus()
+	result := NewStatus()
 	for _, segment := range c.segments {
 		status := segment.status()
 		result.Count += status.Count

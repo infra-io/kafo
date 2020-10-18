@@ -29,13 +29,14 @@ $ go run main.go
 
 ### 🔥 性能测试
 
-> 场景：1000 个 Goroutine 进行写入和读取的耗时
+> 场景：10000 个键值对的写入和读取的耗时
 
 > 环境：R7-4700U CPU @ 2.0 GHZ，16 GB RAM
 
-| Write | Read |
-|------|------|
-| 60.0 ms | 543.6 ms |
+| type | Write | Read |
+|------|-------|------|
+| http | 689.3ms | 5272.1ms |
+| tcp | 403.9ms | 387.1ms |
 
 测试详情参考文件 [_examples/performance_test.go](./_examples/performance_test.go)。
 
@@ -48,3 +49,4 @@ $ go run main.go
 | 项目 | 作者 | 描述 | 链接 |
 | -----------|--------|-------------|-------------------|
 | logit | FishGoddess | 一个高性能、功能强大且极易上手的日志库 | [GitHub](https://github.com/FishGoddess/logit) / [码云](https://gitee.com/FishGoddess/logit) |
+| vex | FishGoddess | 一个高性能、且极易上手的网络通信框架 | [GitHub](https://github.com/FishGoddess/vex) / [码云](https://gitee.com/FishGoddess/vex) |
