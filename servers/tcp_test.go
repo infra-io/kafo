@@ -14,15 +14,16 @@ import (
 	"testing"
 	"time"
 
-	"github.com/FishGoddess/kafo/caches"
+	"github.com/avino-plan/kafo/caches"
 )
 
 // go test -v -cover -run=^TestTCPServer$
 func TestTCPServer(t *testing.T) {
 
-	server := NewTCPServer(caches.NewCache())
+	options := DefaultOptions()
+	server, err := NewTCPServer(caches.NewCache(), &options)
 	go func() {
-		err := server.Run(":5837")
+		err := server.Run()
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -31,7 +32,7 @@ func TestTCPServer(t *testing.T) {
 
 	time.Sleep(time.Second)
 
-	client, err := NewTCPClient(":5837")
+	client, err := NewTCPClient("127.0.0.1:5837")
 	if err != nil {
 		t.Fatal(err)
 	}

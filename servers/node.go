@@ -12,7 +12,7 @@ import (
 	"io/ioutil"
 	"time"
 
-	"github.com/FishGoddess/kafo/helpers"
+	"github.com/avino-plan/kafo/helpers"
 	"github.com/hashicorp/memberlist"
 	"stathat.com/c/consistent"
 )

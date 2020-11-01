@@ -12,9 +12,11 @@ import (
 	"encoding/binary"
 	"encoding/json"
 
-	"github.com/FishGoddess/kafo/caches"
+	"github.com/avino-plan/kafo/caches"
 	"github.com/FishGoddess/vex"
 )
+
+// TODO 集群化改造
 
 // TCPClient is a tcp client for tcp server.
 type TCPClient struct {
