@@ -16,6 +16,8 @@ import (
 	"github.com/FishGoddess/vex"
 )
 
+// TODO 集群化改造
+
 // TCPClient is a tcp client for tcp server.
 type TCPClient struct {
 	// client is the real client to connect tcp server.
