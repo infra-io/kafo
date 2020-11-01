@@ -22,3 +22,8 @@ DELETE http://{{v1}}/cache/key1
 GET http://{{v1}}/status
 
 ###
+
+# Nodes
+GET http://{{v1}}/nodes
+
+###

@@ -18,14 +18,14 @@ const (
 // Server is an interface of servers.
 type Server interface {
 
-	// Run runs a server on specified address.
-	Run(address string) error
+	// Run runs a server and returns ann error if something wrong.
+	Run() error
 }
 
 // NewServer returns a server of serverType.
-func NewServer(serverType string, cache *caches.Cache) Server {
-	if serverType == "tcp" {
-		return NewTCPServer(cache)
+func NewServer(cache *caches.Cache, options Options) (Server, error) {
+	if options.ServerType == "tcp" {
+		return NewTCPServer(cache, &options)
 	}
-	return NewHTTPServer(cache)
+	return NewHTTPServer(cache, &options)
 }

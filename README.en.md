@@ -8,6 +8,8 @@
 
 ### 📃 Features
 
+* Use Gossip to communicate with each node in cluster
+* Consistent hash supports, each node has independent data
 * Get/Set/Delete/Status interface supports
 * HTTP / TCP server supports
 * Status in control, such as memory size
@@ -29,7 +31,7 @@ $ go run main.go
 
 ### 🔥 Benchmarks
 
-> Case: 1000 Goroutines, writing and reading
+> Case: 10000 entries, writing and reading
 
 > Environment: R7-4700U CPU @ 2.0 GHZ，16 GB RAM
 

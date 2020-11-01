@@ -134,7 +134,7 @@ func (c *Cache) gc() {
 	wg.Wait()
 }
 
-// AutoGc starts a goroutine and run the gc task at fixed duration.
+// AutoGc starts a goroutine and runs the gc task at fixed duration.
 func (c *Cache) AutoGc() {
 	go func() {
 		ticker := time.NewTicker(time.Duration(c.options.GcDuration) * time.Minute)
@@ -154,7 +154,7 @@ func (c *Cache) dump() error {
 	return newDump(c).to(c.options.DumpFile)
 }
 
-// AutoDump starts a goroutine and run the dump task at fixed duration.
+// AutoDump starts a goroutine and runs the dump task at fixed duration.
 func (c *Cache) AutoDump() {
 	go func() {
 		ticker := time.NewTicker(time.Duration(c.options.DumpDuration) * time.Minute)
