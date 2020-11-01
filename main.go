@@ -13,8 +13,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/FishGoddess/kafo/caches"
-	"github.com/FishGoddess/kafo/servers"
+	"github.com/avino-plan/kafo/caches"
+	"github.com/avino-plan/kafo/servers"
 )
 
 func main() {

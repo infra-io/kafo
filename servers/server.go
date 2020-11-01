@@ -8,7 +8,7 @@
 
 package servers
 
-import "github.com/FishGoddess/kafo/caches"
+import "github.com/avino-plan/kafo/caches"
 
 const (
 	// APIVersion is the version of serving APIs.

@@ -15,7 +15,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/FishGoddess/kafo/servers"
+	"github.com/avino-plan/kafo/servers"
 )
 
 const (

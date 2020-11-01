@@ -1,4 +1,4 @@
-module github.com/FishGoddess/kafo
+module github.com/avino-plan/kafo
 
 go 1.14
 

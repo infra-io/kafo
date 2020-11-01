@@ -13,7 +13,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/FishGoddess/kafo/servers"
+	"github.com/avino-plan/kafo/servers"
 )
 
 func main() {

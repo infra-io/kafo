@@ -12,7 +12,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 
-	"github.com/FishGoddess/kafo/caches"
+	"github.com/avino-plan/kafo/caches"
 	"github.com/FishGoddess/vex"
 )
 

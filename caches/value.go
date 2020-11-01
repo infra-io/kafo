@@ -12,7 +12,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/FishGoddess/kafo/helpers"
+	"github.com/avino-plan/kafo/helpers"
 )
 
 const (

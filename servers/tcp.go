@@ -14,8 +14,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/FishGoddess/kafo/caches"
-	"github.com/FishGoddess/kafo/helpers"
+	"github.com/avino-plan/kafo/caches"
+	"github.com/avino-plan/kafo/helpers"
 	"github.com/FishGoddess/vex"
 )
 
