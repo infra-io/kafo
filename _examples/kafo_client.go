@@ -18,20 +18,20 @@ import (
 
 func main() {
 
-	if len(os.Args) < 2 {
-		fmt.Println("Missing command!")
+	if len(os.Args) < 3 {
+		fmt.Println("Missing args!")
 		os.Exit(1)
 	}
 
-	client, err := servers.NewTCPClient(":5837")
+	client, err := servers.NewTCPClient(os.Args[1])
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 	defer client.Close()
 
-	command := os.Args[1]
-	args := os.Args[2:]
+	command := os.Args[2]
+	args := os.Args[3:]
 	switch command {
 	case "get":
 		doGet(client, args)
@@ -41,6 +41,8 @@ func main() {
 		doDelete(client, args)
 	case "status":
 		doStatus(client, args)
+	case "nodes":
+		doNodes(client, args)
 	default:
 		fmt.Println("Command not found!")
 		os.Exit(1)
@@ -104,4 +106,13 @@ func doStatus(client *servers.TCPClient, args []string) {
 		os.Exit(1)
 	}
 	fmt.Printf("count: %d, keySize: %d, valueSize: %d", status.Count, status.KeySize, status.ValueSize)
+}
+
+func doNodes(client *servers.TCPClient, args []string) {
+	nodes, err := client.Nodes()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	fmt.Printf("nodes: %v", nodes)
 }

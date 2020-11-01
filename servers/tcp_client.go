@@ -67,6 +67,17 @@ func (tc *TCPClient) Status() (*caches.Status, error) {
 	return status, err
 }
 
+// Nodes returns the nodes of cluster and an error if failed.
+func (tc *TCPClient) Nodes() ([]string, error) {
+	body, err := tc.client.Do(nodesCommand, nil)
+	if err != nil {
+		return nil, err
+	}
+	var nodes []string
+	err = json.Unmarshal(body, &nodes)
+	return nodes, err
+}
+
 // Close closes this client and returns an error if failed.
 func (tc *TCPClient) Close() error {
 	return tc.client.Close()
