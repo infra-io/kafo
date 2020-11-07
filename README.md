@@ -21,7 +21,7 @@ _历史版本的特性请查看 [HISTORY.md](./HISTORY.md)。未来版本的新�
 
 ### 🔧 安装方式
 
-（正在开发。。。）
+客户端：[Github](https://github.com/avino-plan/kafo-client) / [码云](https://gitee.com/avino-plan/kafo-client)。
 
 ### 📖 使用手册
 
