@@ -21,7 +21,7 @@ _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about mor
 
 ### 🔧 Installation
 
-(Developing...)
+Client: [Github](https://github.com/avino-plan/kafo-client) / [码云](https://gitee.com/avino-plan/kafo-client).
 
 ### 📖 Guides
 
