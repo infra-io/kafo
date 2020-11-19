@@ -19,15 +19,13 @@
 
 _历史版本的特性请查看 [HISTORY.md](./HISTORY.md)。未来版本的新特性和计划请查看 [FUTURE.md](./FUTURE.md)。_
 
-### 🔧 安装方式
-
-客户端：[Github](https://github.com/avino-plan/kafo-client) / [码云](https://gitee.com/avino-plan/kafo-client)。
-
 ### 📖 使用手册
 
 ```bash
 $ go run main.go
 ```
+
+客户端：[Github](https://github.com/avino-plan/kafo-client) / [码云](https://gitee.com/avino-plan/kafo-client)。
 
 ### 🔥 性能测试
 
@@ -35,10 +33,10 @@ $ go run main.go
 
 > 环境：R7-4700U CPU @ 2.0 GHZ，16 GB RAM
 
-| type | Write | Read |
-|------|-------|------|
-| http | 689.3ms | 5272.1ms |
-| tcp | 403.9ms | 387.1ms |
+| type | write | read | rps |
+|------|-------|------| ----- |
+| http | 689.3ms | 5272.1ms | 1897 |
+| tcp | 403.9ms | 387.1ms | 25833 |
 
 测试详情参考文件 [_examples/performance_test.go](./_examples/performance_test.go)。
 

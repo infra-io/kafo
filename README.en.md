@@ -19,15 +19,13 @@
 
 _Check [HISTORY.md](./HISTORY.md) and [FUTURE.md](./FUTURE.md) to know about more information._
 
-### 🔧 Installation
-
-Client: [Github](https://github.com/avino-plan/kafo-client) / [码云](https://gitee.com/avino-plan/kafo-client).
-
 ### 📖 Guides
 
 ```bash
 $ go run main.go
 ```
+
+Client: [Github](https://github.com/avino-plan/kafo-client) / [码云](https://gitee.com/avino-plan/kafo-client).
 
 ### 🔥 Benchmarks
 
@@ -37,8 +35,8 @@ $ go run main.go
 
 | type | Write | Read |
 |------|-------|------|
-| http | 689.3ms | 5272.1ms |
-| tcp | 403.9ms | 387.1ms |
+| http | 689.3ms | 5272.1ms | 1897 |
+| tcp | 403.9ms | 387.1ms | 25833 |
 
 More detail in [_examples/performance_test.go](./_examples/performance_test.go).
 
